@@ -3,27 +3,51 @@ import mido
 import rtmidi
 import time
 import serial
+import sys
+import serial.tools.list_ports
 
-# TODO what if no ports, how to find port we're interested in?
+def findPort():
+    ports = list(serial.tools.list_ports.comports())
+    port = next(x for x in ports if "Arduino" in x.description)
+    return port.device
+
+def performOperatingSystemCheck():
+    if not sys.platform.startswith('darwin'):
+        raise("Only macOS is supported")
+
+def performPythonVersionCheck():
+    if sys.version_info < (3,8,3):
+        raise Exception("Must be using Python 3.8.3")
+
+def startFluidSynth():
+    sf2 = "/Users/jameszaghini/Downloads/FluidR3_GM/FluidR3_GM.sf2"
+    subprocess.Popen(["fluidsynth", sf2], stdout=subprocess.DEVNULL)
+
+def getMidoPort():
+    outputs = mido.get_output_names()
+    first_port = outputs[0]
+    return mido.open_output(first_port)
+
+def getSerialValue(serial):
+    val = str(serial.readline())
+    return val[2:][:-5]
 
 def main():
     print("♪ Initialising.")
 
-    ser=serial.Serial('/dev/cu.usbmodem141301', 9600)
+    performOperatingSystemCheck()
+    performPythonVersionCheck()
+    startFluidSynth()
 
-    sf2 = "/Users/jameszaghini/Downloads/FluidR3_GM/FluidR3_GM.sf2"
+    portDevice = findPort()
 
-    subprocess.Popen(["fluidsynth", sf2], stdout=subprocess.DEVNULL)
+    ser = serial.Serial(portDevice, 9600)
 
     # TODO: how to get rid of this?
     time.sleep(1)
     print("♫ Ready.")
 
-    outputs = mido.get_output_names()
-
-    first_port = outputs[0]
-
-    port = mido.open_output(first_port)
+    port = getMidoPort()
 
     msg_a = mido.Message('note_on', note=60)
     msg_b = mido.Message('note_on', note=65)
@@ -36,10 +60,7 @@ def main():
 
     while True:
 
-        val = str(ser.readline())
-        val = val[2:][:-5]
-
-        # print(val)
+        val = getSerialValue(ser)
 
         if val == "A_DOWN":
             if not is_a_down:
