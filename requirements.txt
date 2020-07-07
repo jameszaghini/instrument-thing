@@ -1,4 +1,7 @@
 mido==1.2.9
 pyFluidSynth==1.2.5
-pyserial==3.4
 python-rtmidi==1.4.1
+
+# Using master of pyserial because of this bug
+# https://github.com/pyserial/pyserial/issues/286
+git+https://github.com/pyserial/pyserial.git@master#egg=pyserial
