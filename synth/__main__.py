@@ -5,6 +5,9 @@ import time
 import serial
 import sys
 import serial.tools.list_ports
+import os
+
+from .key import Key
 
 def findPort():
     ports = list(serial.tools.list_ports.comports())
@@ -20,7 +23,9 @@ def performPythonVersionCheck():
         raise Exception("Must be using Python 3.8.3")
 
 def startFluidSynth():
-    sf2 = "/Users/jameszaghini/Downloads/FluidR3_GM/FluidR3_GM.sf2"
+    basepath = os.path.dirname(__file__)
+    # sf2 = os.path.abspath(os.path.join(basepath, '..', 'soundfonts', 'FUNKFRET.sf2'))
+    sf2 = os.path.abspath(os.path.join(basepath, '..', 'soundfonts', 'FluidR3_GM.sf2'))
     subprocess.Popen(["fluidsynth", sf2], stdout=subprocess.DEVNULL)
 
 def getMidoPort():
@@ -29,8 +34,10 @@ def getMidoPort():
     return mido.open_output(first_port)
 
 def getSerialValue(serial):
-    val = str(serial.readline())
-    return val[2:][:-5]
+    line = serial.readline()
+    line = line.rstrip()
+    line = line.decode("utf-8")
+    return line
 
 def main():
     print("♪ Initialising.")
@@ -49,42 +56,21 @@ def main():
 
     port = getMidoPort()
 
-    msg_a = mido.Message('note_on', note=60)
-    msg_b = mido.Message('note_on', note=65)
-
-    is_a_down = False
-    is_b_down = False
-
-    play_a = False
-    play_b = False
+    keys = [
+        Key(60, "A_DOWN", "A_UP"),
+        Key(62, "B_DOWN", "B_UP"),
+        Key(64, "C_DOWN", "C_UP"),
+    ]
 
     while True:
 
         val = getSerialValue(ser)
 
-        if val == "A_DOWN":
-            if not is_a_down:
-                play_a = True
-            is_a_down = True
-
-        elif val == "A_UP":
-            is_a_down = False
-
-        if val == "B_DOWN":
-            if not is_b_down:
-                play_b = True
-            is_b_down = True
-            
-        elif val == "B_UP":
-            is_b_down = False
-
-        if play_a:
-            port.send(msg_a)
-            play_a = False
-
-        if play_b:
-            port.send(msg_b)
-            play_b = False
+        for key in keys:
+            key.process(val)
+            if key.play:
+                port.send(key.message)
+                key.play = False
 
 if __name__ == "__main__":
     main()
