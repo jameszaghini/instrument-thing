@@ -1,0 +1,4 @@
+pyFluidSynth==1.2.5
+
+mido==1.2.9
+python-rtmidi==1.4.1
