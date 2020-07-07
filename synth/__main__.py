@@ -1,4 +1,3 @@
-import subprocess
 import mido
 import rtmidi
 import time
@@ -7,26 +6,16 @@ import sys
 import serial.tools.list_ports
 import os
 
+from .application import Application
 from .key import Key
+from .fluidsynthcontroller import FluidSynthController
 
 def findPort():
     ports = list(serial.tools.list_ports.comports())
-    port = next(x for x in ports if "Arduino" in x.description)
+    port = next((x for x in ports if "Arduino" in x.description), None)
+    if port == None:
+        raise Exception("No Arduino found")
     return port.device
-
-def performOperatingSystemCheck():
-    if not sys.platform.startswith('darwin'):
-        raise("Only macOS is supported")
-
-def performPythonVersionCheck():
-    if sys.version_info < (3,8,3):
-        raise Exception("Must be using Python 3.8.3")
-
-def startFluidSynth():
-    basepath = os.path.dirname(__file__)
-    # sf2 = os.path.abspath(os.path.join(basepath, '..', 'soundfonts', 'FUNKFRET.sf2'))
-    sf2 = os.path.abspath(os.path.join(basepath, '..', 'soundfonts', 'FluidR3_GM.sf2'))
-    subprocess.Popen(["fluidsynth", sf2], stdout=subprocess.DEVNULL)
 
 def getMidoPort():
     outputs = mido.get_output_names()
@@ -42,9 +31,8 @@ def getSerialValue(serial):
 def main():
     print("♪ Initialising.")
 
-    performOperatingSystemCheck()
-    performPythonVersionCheck()
-    startFluidSynth()
+    Application()
+    FluidSynthController.startFluidSynth()
 
     portDevice = findPort()
 
