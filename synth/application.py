@@ -20,12 +20,7 @@ class Application():
         self.performPythonVersionCheck()
         self.startFluidSynth()
         self.arduino = Arduino()
-
-        # TODO: Find better way
-        time.sleep(1)
-
         self.run()
-
 
     def performOperatingSystemCheck(self):
         if not sys.platform.startswith('darwin'):
