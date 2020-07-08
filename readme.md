@@ -1,8 +1,19 @@
-macOS
-`brew install fluidsynth`
+# Requirements
 
+* macOS
+* Python 3.8.3
+* Arduino Mega
 
-Install fluidsynth
-https://github.com/FluidSynth/fluidsynth/releases
+# Setup
 
-`pip install -r requirements.txt`
+```
+brew install fluidsynth
+python3 setup.py
+pip3 install -r requirements.txt
+chmod +x install.sh
+./install.sh
+```
+
+# Run
+
+`synth`
