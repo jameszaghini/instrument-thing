@@ -51,6 +51,8 @@ class Application():
             Key(64, "C_DOWN", "C_UP"),
         ]
 
+        print("♫ Ready.")
+
         while True:
 
             val = self.arduino.read()
