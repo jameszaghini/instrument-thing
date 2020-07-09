@@ -5,44 +5,30 @@ int buttonPinC = 12;
 
 void setup() {
 
-  Serial.begin(9600);
-  
-   pinMode(buttonPinA, INPUT_PULLUP);
-   pinMode(buttonPinB, INPUT_PULLUP);
-   pinMode(buttonPinC, INPUT_PULLUP);
-   
-   pinMode(LED, OUTPUT);
+    Serial.begin(9600);
+
+    pinMode(buttonPinA, INPUT_PULLUP);
+    pinMode(buttonPinB, INPUT_PULLUP);
+    pinMode(buttonPinC, INPUT_PULLUP);
+
+    pinMode(LED, OUTPUT);
 }
 
 void loop(){
+    handleReadForButton(buttonPinA, "A_DOWN", "A_UP");
+    handleReadForButton(buttonPinB, "B_DOWN", "B_UP");
+    handleReadForButton(buttonPinC, "C_DOWN", "C_UP");
+}
 
-   int buttonValue = digitalRead(buttonPinA);
+void handleReadForButton(int pin, String down, String up) {
    
-   if (buttonValue == LOW){
-      digitalWrite(LED,HIGH);
-      Serial.println("A_DOWN");
-   } else {
-      digitalWrite(LED, LOW);
-      Serial.println("A_UP");
-   }
-
-   int buttonValueB = digitalRead(buttonPinB);
+    int buttonValue = digitalRead(pin);
    
-   if (buttonValueB == LOW){
-      digitalWrite(LED,HIGH);
-      Serial.println("B_DOWN");
-   } else {
-      digitalWrite(LED, LOW);
-      Serial.println("B_UP");
-   }
-
-   int buttonValueC = digitalRead(buttonPinC);
-   
-   if (buttonValueC == LOW){
-      digitalWrite(LED,HIGH);
-      Serial.println("C_DOWN");
-   } else {
-      digitalWrite(LED, LOW);
-      Serial.println("C_UP");
-   }   
+    if (buttonValue == LOW){
+        digitalWrite(LED, HIGH);
+        Serial.println(down);
+    } else {
+        digitalWrite(LED, LOW);
+        Serial.println(up);
+    }
 }
