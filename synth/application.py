@@ -10,8 +10,8 @@ import signal
 from .arduino import Arduino
 from .key import Key
 
-class Application():
 
+class Application:
     def __init__(self):
 
         signal.signal(signal.SIGINT, self.handler)
@@ -23,17 +23,19 @@ class Application():
         self.run()
 
     def performOperatingSystemCheck(self):
-        if not sys.platform.startswith('darwin'):
+        if not sys.platform.startswith("darwin"):
             raise Exception("Only macOS is supported")
 
     def performPythonVersionCheck(self):
-        if sys.version_info < (3,8,3):
+        if sys.version_info < (3, 8, 3):
             raise Exception("Must be using Python 3.8.3")
 
     def startFluidSynth(self):
         basepath = os.path.dirname(__file__)
         # sf2 = os.path.abspath(os.path.join(basepath, '..', 'soundfonts', 'FUNKFRET.sf2'))
-        sf2 = os.path.abspath(os.path.join(basepath, '..', 'soundfonts', 'FluidR3_GM.sf2'))
+        sf2 = os.path.abspath(
+            os.path.join(basepath, "..", "soundfonts", "FluidR3_GM.sf2")
+        )
         subprocess.Popen(["fluidsynth", sf2], stdout=subprocess.DEVNULL)
 
     def getMidoPort(self):

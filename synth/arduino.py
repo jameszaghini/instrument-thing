@@ -1,7 +1,7 @@
 import serial.tools.list_ports
 
-class Arduino():
 
+class Arduino:
     def __init__(self):
         port = self.find_port()
         self.serial = serial.Serial(port, 9600)
