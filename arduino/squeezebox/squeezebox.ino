@@ -1,7 +1,8 @@
-int LED = 13;
-int buttonPinA = 8;
-int buttonPinB = 10;
-int buttonPinC = 12;
+const int LED = 13;
+const int buttonPinA = 8;
+const int buttonPinB = 10;
+const int buttonPinC = 12;
+const int pingPin = 3;
 
 void setup() {
 
@@ -22,7 +23,7 @@ void loop(){
 
 void handleReadForButton(int pin, String down, String up) {
    
-    int buttonValue = digitalRead(pin);
+    const int buttonValue = digitalRead(pin);
    
     if (buttonValue == LOW){
         digitalWrite(LED, HIGH);
